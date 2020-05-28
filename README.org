@@ -1,17 +1,72 @@
-* appigo_todo_export
-export task data from Appigo todo data
+* appigo_todo_export - export data from Appigo Todo.app into org-mode formatted text
+ 
+the script allows to export your Task and Projects out of the Database
+used by the Appigo Mac Todo.App.
 
-database path: 
+Currently it allows the export into an open text format - the org-mode
+format.
+I choose this conversion because I want to change my todo workflow
+towards an open format. 
+It should be easy to adapt the script for transformation into other
+formats.
+
+** Usage 
+
+The simplest usage writes the text output on the standard output
+#+BEGIN_SRC 
+./ appigo_todo_export.py <path/to/database>
+#+END_SRC
+
+The database of the app is located at: 
 sqlite3 ~/Library/Containers/com.appigo.todomac/Data/Library/Application\ Support/Appigo\ Todo/AppigoTodo_v13.sqlitedb
 
-* currently using query:
+** Development setup
+
+Script is developed with python-3.8 and sqlite3 module.
+
+** Release History
+
+*** 0.0.1
+    * Work in progress
+
+** Meta
+
+Gittiver – gulliver@traumkristalle.net
+
+Distributed under the BSD 3-Clause license. See ``LICENSE`` for more information.
+
+[https://github.com/gittiver/appigo_todo_export](https://github.com/gittiver/appigo_todo_export)
+
+** Contributing
+
+1. Fork it (<https://github.com/yourname/yourproject/fork>)
+2. Create your feature branch (`git checkout -b feature/fooBar`)
+3. Commit your changes (`git commit -am 'Add some fooBar'`)
+4. Push to the branch (`git push origin feature/fooBar`)
+5. Create a new Pull Request
+
+
+** ToDo 
+- read projects as toplevel todo, attach tasks as child TODO items (DONE)
+- read simpler task types and attach them to parent projct or list (DONE)
+- decode taskdata for tasktype 2
+- decode dates (DONE)
+- decode recurrences (DONE)
+
+** Internal 
+*** currently using query:
+
+#+BEGIN_SRC 
 select name,type,type_data,recurrence,advanced_recurrence from tasks where deleted=0 and completion_date=-62135769600.0 order by parent_id
+
+#+END_SRC
 
 Currently all items are converted to TODO items with other columns as
 properties
 
-#Structure of Tasks table
-`
+*** Structure of Tasks table
+
+#+BEGIN_SRC 
 CREATE TABLE tasks(task_id TEXT PRIMARY KEY,
 list_id TEXT,
 name TEXT,
@@ -55,10 +110,5 @@ project_starred INTEGER,
 start_date_time_zone_offset INTEGER,
 project_start_date_time_zone_offset INTEGER);
 
-`
-*TODO 
-** DONE read projects as toplevel todo, attach tasks as child TODO items (DONE)
-** DONE read simpler task types and attach them to parent projct or list (DONE)
-** TODO decode taskdata for tasktype 2
-** DONE decode dates (DONE)
-** DONE decode recurrences (DONE)
+#+END_SRC
+
