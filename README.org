@@ -1,7 +1,7 @@
-# appigo_todo_export
+* appigo_todo_export
 export task data from Appigo todo data
 
-* database path: 
+database path: 
 sqlite3 ~/Library/Containers/com.appigo.todomac/Data/Library/Application\ Support/Appigo\ Todo/AppigoTodo_v13.sqlitedb
 
 * currently using query:
@@ -56,9 +56,9 @@ start_date_time_zone_offset INTEGER,
 project_start_date_time_zone_offset INTEGER);
 
 `
-#TODO 
-* read projects as toplevel todo, attach tasks as child TODO items (DONE)
-* read simpler task types and attach them to parent projct or list (DONE)
-* decode taskdata for tasktype 2
-* decode dates (DONE)
-* decode recurrences (DONE)
+*TODO 
+** DONE read projects as toplevel todo, attach tasks as child TODO items (DONE)
+** DONE read simpler task types and attach them to parent projct or list (DONE)
+** TODO decode taskdata for tasktype 2
+** DONE decode dates (DONE)
+** DONE decode recurrences (DONE)
