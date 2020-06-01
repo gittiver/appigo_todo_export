@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import sys
+from os import path
 import sqlite3
 import datetime
 
@@ -31,6 +32,7 @@ def convert_tasks(dbname):
         """
      
         connection = sqlite3.connect(dbname)
+        connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
         cursor.execute("select name,type,type_data,recurrence,advanced_recurrence, task_id, parent_id, due_date, project_due_date, note from tasks where deleted=0 and completion_date=-62135769600.0 order by parent_id") 
         result = cursor.fetchall() 
@@ -38,21 +40,21 @@ def convert_tasks(dbname):
         children = {}
         no_parent = []
         for r in result:
-            if r[6] is None:
+            if r['parent_id'] is None:
                 no_parent.append(r)
-            elif r[6] ==u'':
+            elif r['parent_id'] ==u'':
                 no_parent.append(r)
             else:
-                if r[6] in children:
-                    children[r[6]].append(r)
+                if r['parent_id'] in children:
+                    children[r['parent_id']].append(r)
                 else:
-                    children[r[6]] =[r]
+                    children[r['parent_id']] =[r]
                     
         level=1               
         for task in no_parent:
             convert_task(task,level)
-            if task[5] in children:
-                for sub_task in children[task[5]]:
+            if task['task_id'] in children:
+                for sub_task in children[task['task_id']]:
                     convert_task(sub_task,level+1)
                 
         connection.close()
@@ -71,34 +73,41 @@ def double_to_date(d):
         return datetime.datetime.fromtimestamp(d).strftime("%Y-%m-%d %a %H:%M")
 
 def convert_task(row,level):
-        """converts a single task row"""
-  #      print row
-        print level*'*',"TODO", row[0].encode('utf-8')
-        if row[1]==1:
-                if row[8]<64092211200.0:
-                        print "DEADLINE:", \
-                          deadline(double_to_date(row[8]),row[3],row[4])
-                
-        elif row[7]<64092211200.0:
-                print "DEADLINE:", \
-                  deadline(double_to_date(row[7]),row[3],row[4])
-        print ":PROPERTIES:"
-        print ":Tasktype:",tasktype[row[1]]
-        print ":type_data:", row[2].encode('utf-8')
-        print ":recurrence:", row[3]
-        print ":advanced_recurrence:", row[4]
-        print ":task_id:", row[5]
-        print ":parent_id:", row[6]
-        print ":due_date:", row[7]
-        print ":END:"
+      """converts a single task row"""
+      
+      print level*'*',"TODO", row['name'].encode('utf-8')
+
+      #convert due_date to DEADLINE entry
+      if row['type']==1:
+          # for project use project_due_date
+          due_date = row['project_due_date']
+      else:
+          # for other than project use due_date
+          due_date = row['due_date']
         
-        if row[9] !='':
-                print row[9].encode('utf8')
+      if due_date < 64092211200.0:
+            print "DEADLINE:", \
+                      deadline(double_to_date(due_date),
+                               row['recurrence'],
+                               row['advanced_recurrence'])
+
+      print ":PROPERTIES:"
+      print ":Tasktype:",tasktype[row['type']]
+      print ":type_data:", row['type_data'].encode('utf-8')
+      print ":recurrence:", row['recurrence']
+      print ":advanced_recurrence:", row['advanced_recurrence']
+      print ":task_id:", row['task_id']
+      print ":parent_id:", row['parent_id']
+      print ":due_date:", row['due_date']
+      print ":END:"
+        
+      if row['note'] !='':
+            print row['note'].encode('utf8')
         
 def main(argv):
     if len(argv)<1:
-        print "please call with inputfile name as first parameter"
-        sys.exit(1)
+        inputfile = path.expanduser('~/Library/Containers/com.appigo.todomac/Data/Library/Application Support/Appigo Todo/AppigoTodo_v13.sqlitedb')
+        
     else:
         inputfile = argv[0]
 
