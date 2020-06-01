@@ -10,6 +10,10 @@ towards an open format.
 It should be easy to adapt the script for transformation into other
 formats.
 
+** Features
+- read projects as toplevel todo, attach tasks as child TODO items
+- read simpler task types and attach them to parent projoct or list
+
 ** Usage 
 
 The simplest usage writes the text output on the standard output
@@ -20,15 +24,14 @@ The simplest usage writes the text output on the standard output
 The database of the app is located at: 
 sqlite3 ~/Library/Containers/com.appigo.todomac/Data/Library/Application\ Support/Appigo\ Todo/AppigoTodo_v13.sqlitedb
 
+
 ** Development setup
 
 Script is developed with python-3.8 and sqlite3 module.
 
 ** Release History
-
 *** 0.0.1
     * Work in progress
-
 ** Meta
 
 Gittiver – gulliver@traumkristalle.net
@@ -45,13 +48,8 @@ Distributed under the BSD 3-Clause license. See ``LICENSE`` for more information
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
 
-
 ** ToDo 
-- read projects as toplevel todo, attach tasks as child TODO items (DONE)
-- read simpler task types and attach them to parent projct or list (DONE)
 - decode taskdata for tasktype 2
-- decode dates (DONE)
-- decode recurrences (DONE)
 
 ** Internal 
 *** currently using query:
